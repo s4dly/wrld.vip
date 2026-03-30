@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WRLD.VIP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            pointer-events: none;
+        }
+
+        .glow-bg {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .globe-container {
+            width: 320px;
+            height: 320px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .globe-glow {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        canvas#globe {
+            width: 320px;
+            height: 320px;
+        }
+
+        .text-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        .headline {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            animation: fadeInUp 1s ease 0.7s both;
+            background: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .headline .accent {
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.5) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subline {
+            font-size: 15px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 1px;
+            animation: fadeInUp 1s ease 0.9s both;
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            animation: fadeInUp 1s ease 1.1s both;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: rgba(255,255,255,0.85);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 32px rgba(255,255,255,0.1);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .btn-ghost:hover {
+            color: #fff;
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            animation: fadeIn 1s ease 0.2s both;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .nav-logo span {
+            color: rgba(255,255,255,0.35);
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            animation: fadeIn 1s ease 1.3s both;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 0.5px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @media (max-width: 600px) {
+            .nav { padding: 16px 20px; }
+            .nav-links { display: none; }
+            .footer { padding: 16px 20px; }
+            .globe-container { width: 240px; height: 240px; }
+            canvas#globe { width: 240px; height: 240px; }
+            .cta-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="glow-bg"></div>
+
+    <nav class="nav">
+        <div class="nav-logo">WRLD<span>.VIP</span></div>
+        <ul class="nav-links">
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="globe-container">
+            <div class="globe-glow"></div>
+            <canvas id="globe"></canvas>
+        </div>
+
+        <div class="text-content">
+            <div class="brand">WRLD.VIP</div>
+            <h1 class="headline">THE WRLD IS YOURS</h1>
+            <p class="subline">Coming soon — something exclusive.</p>
+            <div class="cta-row">
+                <a href="#" class="btn btn-primary">Get Started</a>
+                <a href="#" class="btn btn-ghost">Learn More</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-text">&copy; 2026 WRLD.VIP</div>
+        <div class="status">
+            <div class="status-dot"></div>
+            All systems operational
+        </div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('globe');
+        const ctx = canvas.getContext('2d');
+
+        const dpr = window.devicePixelRatio || 1;
+        let size = canvas.parentElement.clientWidth;
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        ctx.scale(dpr, dpr);
+
+        const cx = size / 2;
+        const cy = size / 2;
+        const radius = size * 0.42;
+
+        let rotation = 0;
+        const rotationSpeed = 0.003;
+        const tilt = 0.4;
+
+        function drawGlobe() {
+            ctx.clearRect(0, 0, size, size);
+
+            // Outer circle
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Latitude lines
+            const latCount = 9;
+            for (let i = 1; i < latCount; i++) {
+                const lat = (Math.PI / latCount) * i - Math.PI / 2;
+                const y = cy + radius * Math.sin(lat) * Math.cos(tilt) ;
+                const r = radius * Math.cos(lat);
+
+                if (r > 0) {
+                    ctx.beginPath();
+                    ctx.ellipse(cx, y, r, r * Math.abs(Math.sin(tilt + 0.3)), 0, 0, Math.PI * 2);
+
+                    const latNorm = Math.abs(lat) / (Math.PI / 2);
+                    const alpha = 0.08 + (1 - latNorm) * 0.12;
+                    ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+                    ctx.lineWidth = 1;
+
+                    if (i % 2 === 0) {
+                        ctx.setLineDash([3, 4]);
+                    } else {
+                        ctx.setLineDash([]);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+
+            // Longitude lines
+            const lonCount = 12;
+            for (let i = 0; i < lonCount; i++) {
+                const lon = (Math.PI / lonCount) * i + rotation;
+
+                ctx.beginPath();
+                const points = [];
+                for (let j = 0; j <= 60; j++) {
+                    const lat = (Math.PI / 60) * j - Math.PI / 2;
+                    const x3d = Math.cos(lat) * Math.cos(lon);
+                    const y3d = Math.sin(lat);
+                    const z3d = Math.cos(lat) * Math.sin(lon);
+
+                    // Apply tilt
+                    const y3dr = y3d * Math.cos(tilt) - z3d * Math.sin(tilt);
+                    const z3dr = y3d * Math.sin(tilt) + z3d * Math.cos(tilt);
+
+                    const px = cx + x3d * radius;
+                    const py = cy - y3dr * radius;
+
+                    points.push({ x: px, y: py, z: z3dr });
+                }
+
+                // Draw front-facing segments solid, back-facing dashed
+                let inFront = points[0].z >= 0;
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+
+                for (let j = 1; j < points.length; j++) {
+                    const nowFront = points[j].z >= 0;
+
+                    if (nowFront !== inFront) {
+                        ctx.strokeStyle = inFront ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.06)';
+                        ctx.lineWidth = inFront ? 1.2 : 0.8;
+                        ctx.setLineDash(inFront ? [] : [2, 3]);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(points[j].x, points[j].y);
+                        inFront = nowFront;
+                    } else {
+                        ctx.lineTo(points[j].x, points[j].y);
+                    }
+                }
+
+                ctx.strokeStyle = inFront ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.06)';
+                ctx.lineWidth = inFront ? 1.2 : 0.8;
+                ctx.setLineDash(inFront ? [] : [2, 3]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Additional cross-hatch lines for texture
+            const crossCount = 8;
+            for (let i = 0; i < crossCount; i++) {
+                const offset = (Math.PI * 2 / crossCount) * i + rotation * 0.7;
+                ctx.beginPath();
+                const pts = [];
+                for (let j = 0; j <= 60; j++) {
+                    const t = (j / 60) * Math.PI - Math.PI / 2;
+                    const lat = t;
+                    const lon = offset + t * 0.8;
+                    const x3d = Math.cos(lat) * Math.cos(lon);
+                    const y3d = Math.sin(lat);
+                    const z3d = Math.cos(lat) * Math.sin(lon);
+
+                    const y3dr = y3d * Math.cos(tilt) - z3d * Math.sin(tilt);
+                    const z3dr = y3d * Math.sin(tilt) + z3d * Math.cos(tilt);
+
+                    const dist = Math.sqrt(x3d * x3d + y3dr * y3dr);
+                    if (dist > 1) continue;
+
+                    pts.push({ x: cx + x3d * radius, y: cy - y3dr * radius, z: z3dr });
+                }
+
+                if (pts.length > 1) {
+                    let started = false;
+                    for (let j = 0; j < pts.length; j++) {
+                        if (pts[j].z >= -0.1) {
+                            if (!started) {
+                                ctx.moveTo(pts[j].x, pts[j].y);
+                                started = true;
+                            } else {
+                                ctx.lineTo(pts[j].x, pts[j].y);
+                            }
+                        }
+                    }
+                    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+            }
+
+            // Glow edge
+            const gradient = ctx.createRadialGradient(cx, cy, radius * 0.85, cx, cy, radius * 1.05);
+            gradient.addColorStop(0, 'rgba(255,255,255,0)');
+            gradient.addColorStop(0.5, 'rgba(255,255,255,0.02)');
+            gradient.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            rotation += rotationSpeed;
+            requestAnimationFrame(drawGlobe);
+        }
+
+        drawGlobe();
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            size = canvas.parentElement.clientWidth;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            ctx.scale(dpr, dpr);
+        });
+    </script>
+</body>
+</html>
