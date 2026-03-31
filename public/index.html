@@ -467,13 +467,11 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: #0a0a0f;
+            background: #0a0a0c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: #fff;
+            overflow: hidden;
         }
 
         .ig-user-info { flex: 1; }
@@ -711,13 +709,13 @@
                     </div>
                     <div class="contact-arrow">&#8594;</div>
                 </a>
-                <a href="https://instagram.com/wrld.vip" target="_blank" rel="noopener" class="contact-row" style="text-decoration:none;">
+                <a href="https://instagram.com/wrld.vip_" target="_blank" rel="noopener" class="contact-row" style="text-decoration:none;">
                     <div class="contact-icon">
                         <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="rgba(255,255,255,0.5)" stroke="none"/></svg>
                     </div>
                     <div class="contact-info">
                         <div class="label">Instagram</div>
-                        <div class="value">@wrld.vip</div>
+                        <div class="value">@wrld.vip_</div>
                     </div>
                     <div class="contact-arrow">&#8594;</div>
                 </a>
@@ -744,39 +742,37 @@
             <div class="ig-card">
                 <div class="ig-header">
                     <div class="ig-avatar">
-                        <div class="ig-avatar-inner">W</div>
+                        <div class="ig-avatar-inner">
+                            <canvas id="mini-globe" width="44" height="44" style="width:44px;height:44px;border-radius:50%;"></canvas>
+                        </div>
                     </div>
                     <div class="ig-user-info">
                         <div class="ig-username">
                             wrld.vip
-                            <svg class="ig-verified" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" fill="#3897f0"/>
-                                <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
                         </div>
-                        <div class="ig-handle">The WRLD is yours</div>
+                        <div class="ig-handle">@wrld.vip_</div>
                     </div>
-                    <a href="https://instagram.com/wrld.vip" target="_blank" rel="noopener" class="ig-follow-btn">Follow</a>
+                    <a href="https://instagram.com/wrld.vip_" target="_blank" rel="noopener" class="ig-follow-btn">Follow</a>
                 </div>
                 <div class="ig-body">
-                    <div class="ig-bio">Exclusive services & digital solutions. Building something different.</div>
+                    <div class="ig-bio">Private Members Club</div>
                     <div class="ig-stats">
                         <div class="ig-stat">
-                            <div class="ig-stat-num">—</div>
+                            <div class="ig-stat-num">0</div>
                             <div class="ig-stat-label">Posts</div>
                         </div>
                         <div class="ig-stat">
-                            <div class="ig-stat-num">—</div>
+                            <div class="ig-stat-num">2</div>
                             <div class="ig-stat-label">Followers</div>
                         </div>
                         <div class="ig-stat">
-                            <div class="ig-stat-num">—</div>
+                            <div class="ig-stat-num">2</div>
                             <div class="ig-stat-label">Following</div>
                         </div>
                     </div>
                 </div>
                 <div class="ig-footer">
-                    <a href="https://instagram.com/wrld.vip" target="_blank" rel="noopener">View full profile on Instagram &#8594;</a>
+                    <a href="https://instagram.com/wrld.vip_" target="_blank" rel="noopener">View full profile on Instagram &#8594;</a>
                 </div>
             </div>
         </div>
@@ -949,6 +945,69 @@
             canvas.style.height = size + 'px';
             ctx.scale(dpr, dpr);
         });
+
+        // ── Mini Globe for IG Avatar ──
+        const mc = document.getElementById('mini-globe');
+        const mctx = mc.getContext('2d');
+        const ms = 44;
+        mc.width = ms * dpr;
+        mc.height = ms * dpr;
+        mctx.scale(dpr, dpr);
+        const mcx = ms / 2, mcy = ms / 2, mr = ms * 0.38;
+        let mrot = 0;
+
+        function drawMiniGlobe() {
+            mctx.clearRect(0, 0, ms, ms);
+            mctx.beginPath();
+            mctx.arc(mcx, mcy, mr, 0, Math.PI * 2);
+            mctx.strokeStyle = 'rgba(255,255,255,0.25)';
+            mctx.lineWidth = 0.8;
+            mctx.stroke();
+
+            for (let i = 1; i < 6; i++) {
+                const lat = (Math.PI / 6) * i - Math.PI / 2;
+                const y = mcy + mr * Math.sin(lat) * 0.9;
+                const r = mr * Math.cos(lat);
+                if (r > 0) {
+                    mctx.beginPath();
+                    mctx.ellipse(mcx, y, r, r * 0.35, 0, 0, Math.PI * 2);
+                    mctx.strokeStyle = 'rgba(255,255,255,0.15)';
+                    mctx.lineWidth = 0.5;
+                    mctx.stroke();
+                }
+            }
+
+            for (let i = 0; i < 8; i++) {
+                const lon = (Math.PI / 8) * i + mrot;
+                mctx.beginPath();
+                for (let j = 0; j <= 40; j++) {
+                    const lat = (Math.PI / 40) * j - Math.PI / 2;
+                    const x3d = Math.cos(lat) * Math.cos(lon);
+                    const y3d = Math.sin(lat);
+                    const z3d = Math.cos(lat) * Math.sin(lon);
+                    const y3dr = y3d * 0.92 - z3d * 0.39;
+                    const px = mcx + x3d * mr;
+                    const py = mcy - y3dr * mr;
+                    j === 0 ? mctx.moveTo(px, py) : mctx.lineTo(px, py);
+                }
+                mctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                mctx.lineWidth = 0.5;
+                mctx.stroke();
+            }
+
+            // Shine highlight
+            const sg = mctx.createRadialGradient(mcx - mr * 0.3, mcy - mr * 0.3, 0, mcx, mcy, mr);
+            sg.addColorStop(0, 'rgba(255,255,255,0.08)');
+            sg.addColorStop(1, 'rgba(255,255,255,0)');
+            mctx.beginPath();
+            mctx.arc(mcx, mcy, mr, 0, Math.PI * 2);
+            mctx.fillStyle = sg;
+            mctx.fill();
+
+            mrot += 0.004;
+            requestAnimationFrame(drawMiniGlobe);
+        }
+        drawMiniGlobe();
     </script>
 </body>
 </html>
