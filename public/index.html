@@ -255,12 +255,22 @@
             background-clip: text;
         }
 
-        .subline {
-            font-size: 15px;
-            font-weight: 400;
-            color: rgba(255,255,255,0.35);
-            letter-spacing: 1px;
+        .tagline {
+            font-size: clamp(18px, 3vw, 24px);
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: -0.2px;
             animation: fadeInUp 1s ease 0.9s both;
+        }
+
+        .subline {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.2px;
+            line-height: 1.6;
+            max-width: 420px;
+            animation: fadeInUp 1s ease 1.05s both;
         }
 
         .cta-row {
@@ -681,7 +691,8 @@
             <div class="text-content">
                 <div class="brand">WRLD.VIP</div>
                 <h1 class="headline">THE WRLD IS YOURS</h1>
-                <p class="subline">Coming soon — something exclusive.</p>
+                <p class="tagline">The right network. Everything changes.</p>
+            <p class="subline">Who you surround yourself with shapes how you think, move, and grow. Choose wisely. Build the right network.</p>
                 <div class="cta-row">
                     <a href="#contact" class="btn btn-primary">Get in Touch</a>
                     <a href="#socials" class="btn btn-ghost">Follow Us</a>
